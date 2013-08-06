@@ -3,8 +3,6 @@ jbpm6example - rewards-basic
 
 ### This example is written by Jiri Svitak. Thank you!
 
-### I copied this example from his 'jbpm5example' fork to my new repository 'jbpm6example' just for my convenience.
-
 This is a basic jBPM6 web application, which aims to provide an example usage of:
 - Human Task
 - Persistence
