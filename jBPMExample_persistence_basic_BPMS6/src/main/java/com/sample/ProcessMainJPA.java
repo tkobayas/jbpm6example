@@ -24,6 +24,8 @@ import org.kie.internal.runtime.manager.RuntimeManagerFactory;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.kie.internal.task.api.UserGroupCallback;
 
+import bitronix.tm.resource.jdbc.PoolingDataSource;
+
 /**
  * This is a sample file to launch a process.
  */
@@ -79,6 +81,10 @@ public class ProcessMainJPA {
 		// load up the knowledge base
 		JBPMHelper.startH2Server();
 		JBPMHelper.setupDataSource();
+		
+		// for external database
+//		setupDataSource();
+		
 		Properties properties = new Properties();
 		properties.setProperty("krisv", "");
 		properties.setProperty("mary", "");
@@ -99,4 +105,18 @@ public class ProcessMainJPA {
 				environment);
 	}
 
+    public static PoolingDataSource setupDataSource() {
+        // Please edit here when you want to use your database
+        PoolingDataSource pds = new PoolingDataSource();
+        pds.setUniqueName("jdbc/jbpm-ds");
+        pds.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
+        pds.setMaxPoolSize(5);
+        pds.setAllowLocalTransactions(true);
+        pds.getDriverProperties().put("user", "mysql");
+        pds.getDriverProperties().put("password", "mysql");
+        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbpms600");
+        pds.getDriverProperties().put("driverClassName", "com.mysql.jdbc.Driver");
+        pds.init();
+        return pds;
+    }
 }

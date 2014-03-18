@@ -1,4 +1,4 @@
-jBPMExample_persistence_basic is a basic jBPM project for Eclipse. 
+jBPMExample_persistence_basic_BPMS6 is a basic jBPM project for Eclipse. 
 
 - JPA persistence
 - Human Task
@@ -11,16 +11,14 @@ The main purpose is to be able to create various jBPM examples based on this eas
 To switch database, comment out JBPMHelper methods and uncomment setupDataSource()
 
 ```java
-    private static void setup() {
-        // for H2
+	private static RuntimeManager getRuntimeManager(String process) {
+          // for H2
 //        JBPMHelper.startH2Server();
 //        JBPMHelper.setupDataSource();
         
-        // for your DB
-        setupDataSource();
-        
-        UserGroupCallbackManager.getInstance().setCallback(new DefaultUserGroupCallbackImpl());
-    }
+          // for your DB
+          setupDataSource();
+
 ```
 configure your database and add jdbc jar to classpath
 
@@ -34,14 +32,14 @@ configure your database and add jdbc jar to classpath
         pds.setAllowLocalTransactions(true);
         pds.getDriverProperties().put("user", "mysql");
         pds.getDriverProperties().put("password", "mysql");
-        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbrms531");
+        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbpms600");
         pds.getDriverProperties().put("driverClassName", "com.mysql.jdbc.Driver");
         pds.init();
         return pds;
     }
 ```
 
-configure hibernate dialect.
+configure hibernate dialect in persistece.xml.
 ```xml
 <!--      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>  -->
        <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
