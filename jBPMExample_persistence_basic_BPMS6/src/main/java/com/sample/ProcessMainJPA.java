@@ -33,77 +33,72 @@ public class ProcessMainJPA {
 
     private static EntityManagerFactory emf;
 
-	public static final void main(String[] args) throws Exception {
+    public static final void main(String[] args) throws Exception {
 
-		RuntimeManager manager = getRuntimeManager("sample.bpmn");
-		RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
-		KieSession ksession = runtime.getKieSession();
+        RuntimeManager manager = getRuntimeManager("sample.bpmn");
+        RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
+        KieSession ksession = runtime.getKieSession();
 
-		// start a new process instance
-		Map<String, Object> params = new HashMap<String, Object>();
-		ProcessInstance pi = ksession.startProcess("com.sample.bpmn.hello",
-				params);
-		System.out.println("A process instance started : pid = " + pi.getId());
+        // start a new process instance
+        Map<String, Object> params = new HashMap<String, Object>();
+        ProcessInstance pi = ksession.startProcess("com.sample.bpmn.hello", params);
+        System.out.println("A process instance started : pid = " + pi.getId());
 
-		TaskService taskService = runtime.getTaskService();
+        TaskService taskService = runtime.getTaskService();
 
-		// ------------
-		{
-			List<TaskSummary> list = taskService
-					.getTasksAssignedAsPotentialOwner("john", "en-UK");
-			for (TaskSummary taskSummary : list) {
-				System.out.println("john starts a task : taskId = "
-						+ taskSummary.getId());
-				taskService.start(taskSummary.getId(), "john");
-				taskService.complete(taskSummary.getId(), "john", null);
-			}
-		}
+        // ------------
+        {
+            List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("john", "en-UK");
+            for (TaskSummary taskSummary : list) {
+                System.out.println("john starts a task : taskId = " + taskSummary.getId());
+                taskService.start(taskSummary.getId(), "john");
+                taskService.complete(taskSummary.getId(), "john", null);
+            }
+        }
 
-		// -----------
-		{
-			List<TaskSummary> list = taskService
-					.getTasksAssignedAsPotentialOwner("mary", "en-UK");
-			for (TaskSummary taskSummary : list) {
-				System.out.println("mary starts a task : taskId = "
-						+ taskSummary.getId());
-				taskService.start(taskSummary.getId(), "mary");
-				taskService.complete(taskSummary.getId(), "mary", null);
-			}
-		}
+        // -----------
+        {
+            List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("mary", "en-UK");
+            for (TaskSummary taskSummary : list) {
+                System.out.println("mary starts a task : taskId = " + taskSummary.getId());
+                taskService.start(taskSummary.getId(), "mary");
+                taskService.complete(taskSummary.getId(), "mary", null);
+            }
+        }
 
-		// -----------
-		ksession.dispose();
+        // -----------
+        ksession.dispose();
 
-		System.exit(0);
-	}
+        System.exit(0);
+    }
 
-	private static RuntimeManager getRuntimeManager(String process) {
-		// load up the knowledge base
-		JBPMHelper.startH2Server();
-		JBPMHelper.setupDataSource();
-		
-		// for external database
-//		setupDataSource();
-		
-		Properties properties = new Properties();
-		properties.setProperty("krisv", "");
-		properties.setProperty("mary", "");
-		properties.setProperty("john", "");
-		UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(
-				properties);
+    private static RuntimeManager getRuntimeManager(String process) {
+        // load up the knowledge base
+        JBPMHelper.startH2Server();
+        JBPMHelper.setupDataSource();
 
-		emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa", null);
+        // for external database
+        // setupDataSource();
 
-		RuntimeEnvironment environment = RuntimeEnvironmentBuilder
-				.getDefault()
-				.persistence(true)
-				.entityManagerFactory(emf)
-				.userGroupCallback(userGroupCallback)
-				.addAsset(ResourceFactory.newClassPathResource(process),
-						ResourceType.BPMN2).get();
-		return RuntimeManagerFactory.Factory.get().newSingletonRuntimeManager(
-				environment);
-	}
+        Properties properties = new Properties();
+        properties.setProperty("krisv", "");
+        properties.setProperty("mary", "");
+        properties.setProperty("john", "");
+        UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(properties);
+
+        emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa", null);
+
+        RuntimeEnvironment environment =
+                RuntimeEnvironmentBuilder.getDefault()
+                .persistence(true)
+                .entityManagerFactory(emf)
+                .userGroupCallback(userGroupCallback)
+                .addAsset(ResourceFactory.newClassPathResource(process), ResourceType.BPMN2)
+                .get();
+//        return RuntimeManagerFactory.Factory.get().newSingletonRuntimeManager(environment);
+        return RuntimeManagerFactory.Factory.get().newPerProcessInstanceRuntimeManager(environment);
+
+    }
 
     public static PoolingDataSource setupDataSource() {
         // Please edit here when you want to use your database
