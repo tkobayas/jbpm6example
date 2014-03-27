@@ -95,7 +95,6 @@ public class ProcessMainJPA {
                 .userGroupCallback(userGroupCallback)
                 .addAsset(ResourceFactory.newClassPathResource(process), ResourceType.BPMN2)
                 .get();
-//        return RuntimeManagerFactory.Factory.get().newSingletonRuntimeManager(environment);
         return RuntimeManagerFactory.Factory.get().newPerProcessInstanceRuntimeManager(environment);
 
     }
