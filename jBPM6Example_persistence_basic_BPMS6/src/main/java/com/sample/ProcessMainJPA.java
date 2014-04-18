@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.jbpm.process.audit.JPAAuditLogService;
 import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 import org.jbpm.test.JBPMHelper;
@@ -38,6 +39,9 @@ public class ProcessMainJPA {
         RuntimeManager manager = getRuntimeManager("sample.bpmn");
         RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
         KieSession ksession = runtime.getKieSession();
+        
+//        JPAAuditLogService logService = new JPAAuditLogService(ksession.getEnvironment());
+//        logService.clear();
 
         // start a new process instance
         Map<String, Object> params = new HashMap<String, Object>();
@@ -67,6 +71,7 @@ public class ProcessMainJPA {
         }
 
         // -----------
+//        logService.dispose();
         ksession.dispose();
 
         System.exit(0);
@@ -108,7 +113,7 @@ public class ProcessMainJPA {
         pds.setAllowLocalTransactions(true);
         pds.getDriverProperties().put("user", "mysql");
         pds.getDriverProperties().put("password", "mysql");
-        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbpms600");
+        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbpms601");
         pds.getDriverProperties().put("driverClassName", "com.mysql.jdbc.Driver");
         pds.init();
         return pds;
