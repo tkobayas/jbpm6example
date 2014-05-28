@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.sample</groupId>
+	<artifactId>jbpm-simple-dep-kjar</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>kjar</packaging>
+
+	<name>jbpm-simple-dep-kjar</name>
+
+	<properties>
+		<jbpm.version>6.0.2-redhat-6</jbpm.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sample</groupId>
+			<artifactId>jbpm-simple-dep-jar</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<!-- maven plugins -->
+		<plugins>
+			<plugin>
+				<groupId>org.kie</groupId>
+				<artifactId>kie-maven-plugin</artifactId>
+				<version>${jbpm.version}</version>
+				<extensions>true</extensions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jbpm</groupId>
+						<artifactId>jbpm-bpmn2</artifactId>
+						<version>${jbpm.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>
