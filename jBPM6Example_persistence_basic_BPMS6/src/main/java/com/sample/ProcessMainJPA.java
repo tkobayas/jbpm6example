@@ -71,8 +71,7 @@ public class ProcessMainJPA {
         }
 
         // -----------
-//        logService.dispose();
-        ksession.dispose();
+        manager.disposeRuntimeEngine(runtime);
 
         System.exit(0);
     }
