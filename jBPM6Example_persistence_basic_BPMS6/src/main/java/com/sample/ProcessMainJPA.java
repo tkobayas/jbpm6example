@@ -25,6 +25,8 @@ import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.io.ResourceFactory;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 
+import bitronix.tm.BitronixTransactionManager;
+import bitronix.tm.TransactionManagerServices;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
 /**
@@ -42,6 +44,9 @@ public class ProcessMainJPA {
         
 //        JPAAuditLogService logService = new JPAAuditLogService(ksession.getEnvironment());
 //        logService.clear();
+        
+        BitronixTransactionManager transactionManager = TransactionManagerServices.getTransactionManager();
+        transactionManager.setTransactionTimeout(3600); // longer timeout for a debugger
 
         // start a new process instance
         Map<String, Object> params = new HashMap<String, Object>();
