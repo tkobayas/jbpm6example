@@ -6,8 +6,4 @@ http://jboss.org/schema/weld/beans http://jboss.org/schema/weld/beans_1_1.xsd">
     <class>org.jbpm.examples.util.RewardsUserGroupCallback</class>
   </alternatives>
 
-  <interceptors>
-    <class>org.jboss.seam.transaction.TransactionInterceptor</class>
-  </interceptors>
-
 </beans>
