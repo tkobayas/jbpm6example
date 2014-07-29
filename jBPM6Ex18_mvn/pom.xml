@@ -13,7 +13,7 @@
   <description>A sample jBPM Maven project</description>
 
   <properties>
-    <jbpm.version>6.0.2-redhat-6</jbpm.version>
+    <jbpm.version>6.0.3-redhat-4</jbpm.version>
   </properties>
 
   <repositories>
@@ -40,4 +40,16 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+    <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.ip.component.management</groupId>
+        <artifactId>ip-dependency-management-all</artifactId>
+        <version>1.2-redhat-13</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
