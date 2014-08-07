@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_subarraylist" structureRef="java.util.ArrayList&lt;String&gt;" />
+
+  <process processType="Private" isExecutable="true" id="com.sample.approval-by-hr" name="ApprovalByHR" tns:packageName="com.sample" >
+
+    <extensionElements>
+     <tns:import name="java.util.ArrayList" />
+    </extensionElements>
+    <!-- process variables -->
+    <property id="subarraylist" itemSubjectRef="_subarraylist"/>
+
+    <!-- nodes -->
+    <startEvent id="StartEvent_1" name="StartProcess"  isInterrupting="true"/>
+    <userTask id="_jbpm-unique-0" name="Approval by HR" >
+      <extensionElements>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>ArrayList newList = new ArrayList(subarraylist);
+newList.add("Approval by HR");
+kcontext.setVariable("subarraylist", newList);
+
+System.out.println("### subarraylist: " + subarraylist.toString());</tns:script>
+        </tns:onExit-script>
+      </extensionElements>
+      <ioSpecification>
+        <dataInput id="_jbpm-unique-0_TaskNameInput" name="TaskName" />
+        <inputSet>
+          <dataInputRefs>_jbpm-unique-0_TaskNameInput</dataInputRefs>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <targetRef>_jbpm-unique-0_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Approval by HR</from>
+          <to xsi:type="tFormalExpression">_jbpm-unique-0_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression>mary</formalExpression>
+        </resourceAssignmentExpression>
+      </potentialOwner>
+    </userTask>
+    <endEvent id="_jbpm-unique-1" name="End" />
+
+    <!-- connections -->
+    <sequenceFlow id="StartEvent_1-_jbpm-unique-0" sourceRef="StartEvent_1" targetRef="_jbpm-unique-0" />
+    <sequenceFlow id="_jbpm-unique-0-_jbpm-unique-1" sourceRef="_jbpm-unique-0" targetRef="_jbpm-unique-1" />
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="com.sample.approval-by-hr" >
+      <bpmndi:BPMNShape bpmnElement="StartEvent_1" >
+        <dc:Bounds x="41" y="95" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-0" >
+        <dc:Bounds x="166" y="95" width="140" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-1" >
+        <dc:Bounds x="391" y="94" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="StartEvent_1-_jbpm-unique-0" >
+        <di:waypoint x="65" y="119" />
+        <di:waypoint x="236" y="119" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-0-_jbpm-unique-1" >
+        <di:waypoint x="236" y="119" />
+        <di:waypoint x="415" y="118" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

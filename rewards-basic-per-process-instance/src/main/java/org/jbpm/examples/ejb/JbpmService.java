@@ -24,88 +24,111 @@ import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class JbpmService {
 
-    @Inject
-    @org.kie.internal.runtime.manager.cdi.qualifier.PerProcessInstance
-    private RuntimeManager runtimeManager;
+	@Inject
+	@org.kie.internal.runtime.manager.cdi.qualifier.PerProcessInstance
+	private RuntimeManager runtimeManager;
 
-    public long startProcess(String recipient) {
+	public long startProcess(String recipient) {
 
-        RuntimeEngine runtime = runtimeManager.getRuntimeEngine(EmptyContext.get());
-        KieSession ksession = runtime.getKieSession();
-        TaskService taskService = runtime.getTaskService();
+		RuntimeEngine runtime = runtimeManager.getRuntimeEngine(EmptyContext.get());
+		KieSession ksession = runtime.getKieSession();
+		TaskService taskService = runtime.getTaskService();
 
-        System.out.println(runtimeManager);
-        System.out.println(runtime);
-        System.out.println(ksession);
-        System.out.println(ksession.getId());
-        System.out.println(taskService);
+		System.out.println(runtimeManager);
+		System.out.println(runtime);
+		System.out.println(ksession);
+		System.out.println(ksession.getId());
+//		System.out.println(taskService);
 
-        long processInstanceId = -1;
+		long processInstanceId = -1;
 
-        // start a new process instance
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("recipient", recipient);
-        ProcessInstance processInstance = ksession.startProcess("com.sample.rewards-basic", params);
+		// start a new process instance
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("recipient", recipient);
 
-        processInstanceId = processInstance.getId();
+		java.util.ArrayList<String> arraylist = new java.util.ArrayList<String>();
+		arraylist.add("Start");
+		params.put("arraylist", arraylist);
 
-        System.out.println("Process started ... : processInstanceId = " + processInstanceId);
+		ProcessInstance processInstance = ksession.startProcess("com.sample.rewards-basic", params);
 
-        // runtimeManager.disposeRuntimeEngine(runtime);
+		processInstanceId = processInstance.getId();
 
-        return processInstanceId;
-    }
+		System.out.println("Process started ... : processInstanceId = " + processInstanceId);
 
-    public List<TaskSummary> retrieveTaskList(String actorId) {
+		// runtimeManager.disposeRuntimeEngine(runtime);
 
-        RuntimeEngine runtime = runtimeManager.getRuntimeEngine(EmptyContext.get());
-        KieSession ksession = runtime.getKieSession();
-        TaskService taskService = runtime.getTaskService();
+		return processInstanceId;
+	}
 
-        System.out.println(runtime);
-        System.out.println(ksession);
-        System.out.println(ksession.getId());
-        System.out.println(taskService);
+	public void abortProcess(List<Long> processInstanceIds) {
 
-        List<TaskSummary> list;
+		for (Long processInstanceId : processInstanceIds) {
+			RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
+			KieSession ksession = runtime.getKieSession();
 
-        list = taskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
+			System.out.println("### process instance id: " + processInstanceId);
+			System.out.println(runtimeManager);
+			System.out.println(runtime);
+			System.out.println(ksession);
+			System.out.println(ksession.getId());
 
-        System.out.println("retrieveTaskList by " + actorId);
-        for (TaskSummary task : list) {
-            System.out.println(" task.getId() = " + task.getId());
-        }
+			ksession.abortProcessInstance(processInstanceId);
+		}
 
-        // runtimeManager.disposeRuntimeEngine(runtime);
+		// runtimeManager.disposeRuntimeEngine(runtime);
+	}
 
-        return list;
-    }
+	public List<TaskSummary> retrieveTaskList(String actorId) {
 
-    public void approveTask(String actorId, long taskId, long processInstanceId) throws ProcessOperationException {
+		RuntimeEngine runtime = runtimeManager.getRuntimeEngine(EmptyContext.get());
+		KieSession ksession = runtime.getKieSession();
+		TaskService taskService = runtime.getTaskService();
 
-        RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
-        KieSession ksession = runtime.getKieSession();
-        TaskService taskService = runtime.getTaskService();
+//		System.out.println(runtime);
+//		System.out.println(ksession);
+//		System.out.println(ksession.getId());
+//		System.out.println(taskService);
 
-        System.out.println(runtime);
-        System.out.println(ksession);
-        System.out.println(ksession.getId());
-        System.out.println(taskService);
+		List<TaskSummary> list;
 
-        try {
-            System.out.println("approveTask (taskId = " + taskId + ") by " + actorId);
-            taskService.start(taskId, actorId);
-            taskService.complete(taskId, actorId, null);
+		list = taskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
 
-            // Thread.sleep(10000); // To test OptimisticLockException
+		System.out.println("retrieveTaskList by " + actorId);
+		for (TaskSummary task : list) {
+			System.out.println(" task.getId() = " + task.getId());
+		}
 
-        } catch (PermissionDeniedException e) {
-            e.printStackTrace();
-            // Probably the task has already been started by other users
-            throw new ProcessOperationException("The task (id = " + taskId
-                    + ") has likely been started by other users ", e);
-        }
+		// runtimeManager.disposeRuntimeEngine(runtime);
 
-        // runtimeManager.disposeRuntimeEngine(runtime);
-    }
+		return list;
+	}
+
+	public void approveTask(String actorId, long taskId, long processInstanceId)
+			throws ProcessOperationException {
+
+		RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
+		KieSession ksession = runtime.getKieSession();
+		TaskService taskService = runtime.getTaskService();
+
+//		System.out.println(runtime);
+//		System.out.println(ksession);
+//		System.out.println(ksession.getId());
+//		System.out.println(taskService);
+
+		try {
+			System.out.println("approveTask (taskId = " + taskId + ") by " + actorId);
+			taskService.start(taskId, actorId);
+			taskService.complete(taskId, actorId, null);
+
+			// Thread.sleep(10000); // To test OptimisticLockException
+
+		} catch (PermissionDeniedException e) {
+			e.printStackTrace();
+			// Probably the task has already been started by other users
+			throw new ProcessOperationException("The task (id = " + taskId + ") has likely been started by other users ", e);
+		}
+
+		// runtimeManager.disposeRuntimeEngine(runtime);
+	}
 }

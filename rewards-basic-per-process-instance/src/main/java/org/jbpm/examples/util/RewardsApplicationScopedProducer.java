@@ -65,12 +65,11 @@ public class RewardsApplicationScopedProducer {
                 .entityManagerFactory(emf)
                 .userGroupCallback(usergroupCallback)
                 .registerableItemsFactory(factory)
-                .addAsset(
-                        ResourceFactory
-                                .newClassPathResource("rewards-basic.bpmn"),
-                        ResourceType.BPMN2).get();
+                .addAsset(ResourceFactory.newClassPathResource("rewards-basic.bpmn"), ResourceType.BPMN2)
+                .addAsset(ResourceFactory.newClassPathResource("approval-by-hr.bpmn"), ResourceType.BPMN2)
+                .addAsset(ResourceFactory.newClassPathResource("approval-by-pm.bpmn"), ResourceType.BPMN2)
+                .get();
         return environment;
     }
-
 
 }

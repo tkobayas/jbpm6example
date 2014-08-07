@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_subarraylist" structureRef="java.util.ArrayList&lt;String&gt;" />
+
+  <process processType="Private" isExecutable="true" id="com.sample.approval-by-pm" name="ApprovalByPM" tns:packageName="com.sample" >
+
+    <extensionElements>
+     <tns:import name="java.util.ArrayList" />
+    </extensionElements>
+    <!-- process variables -->
+    <property id="subarraylist" itemSubjectRef="_subarraylist"/>
+
+    <!-- nodes -->
+    <startEvent id="StartEvent_1" name="StartProcess"  isInterrupting="true"/>
+    <userTask id="_jbpm-unique-5" name="Approval by PM" >
+      <extensionElements>
+        <tns:onExit-script scriptFormat="http://www.java.com/java">
+          <tns:script>ArrayList newList = new ArrayList(subarraylist);
+newList.add("Approval by PM");
+kcontext.setVariable("subarraylist", newList);
+
+System.out.println("### subarraylist: " + subarraylist.toString());</tns:script>
+        </tns:onExit-script>
+      </extensionElements>
+      <ioSpecification>
+        <dataInput id="_jbpm-unique-5_TaskNameInput" name="TaskName" />
+        <dataInput id="_jbpm-unique-5_NodeNameInput" name="NodeName" />
+        <inputSet>
+          <dataInputRefs>_jbpm-unique-5_TaskNameInput</dataInputRefs>
+          <dataInputRefs>_jbpm-unique-5_NodeNameInput</dataInputRefs>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <targetRef>_jbpm-unique-5_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Approval by PM</from>
+          <to xsi:type="tFormalExpression">_jbpm-unique-5_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_jbpm-unique-5_NodeNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">Approval by PM</from>
+          <to xsi:type="tFormalExpression">_jbpm-unique-5_NodeNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression>john</formalExpression>
+        </resourceAssignmentExpression>
+      </potentialOwner>
+    </userTask>
+    <endEvent id="_jbpm-unique-6" name="End" />
+
+    <!-- connections -->
+    <sequenceFlow id="StartEvent_1-_jbpm-unique-5" sourceRef="StartEvent_1" targetRef="_jbpm-unique-5" />
+    <sequenceFlow id="_jbpm-unique-5-_jbpm-unique-6" sourceRef="_jbpm-unique-5" targetRef="_jbpm-unique-6" />
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="com.sample.approval-by-pm" >
+      <bpmndi:BPMNShape bpmnElement="StartEvent_1" >
+        <dc:Bounds x="85" y="127" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-5" >
+        <dc:Bounds x="230" y="126" width="148" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-6" >
+        <dc:Bounds x="471" y="126" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="StartEvent_1-_jbpm-unique-5" >
+        <di:waypoint x="109" y="151" />
+        <di:waypoint x="304" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-5-_jbpm-unique-6" >
+        <di:waypoint x="304" y="150" />
+        <di:waypoint x="495" y="150" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

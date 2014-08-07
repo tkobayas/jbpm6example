@@ -17,8 +17,12 @@
 package org.jbpm.examples.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.EJB;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -26,34 +30,85 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jbpm.process.audit.AuditLogService;
+import org.jbpm.process.audit.JPAAuditLogService;
+import org.jbpm.process.audit.ProcessInstanceLog;
 import org.jbpm.examples.ejb.JbpmService;
 
 public class ProcessServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @EJB
-    private JbpmService jbpmService;
+	@EJB
+	private JbpmService jbpmService;
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-        
-        String recipient = req.getParameter("recipient");
+	private static final String PERSISTENCE_UNIT_NAME = "org.jbpm.examples.rewards-basic";
+	@PersistenceUnit(unitName = PERSISTENCE_UNIT_NAME)
+	private EntityManagerFactory emf;
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
 
-        long processInstanceId = -1;
-        try {
-            processInstanceId = jbpmService.startProcess(recipient);
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
+		String cmd = req.getParameter("cmd");
+		System.out.println("### cmd: " + cmd);
 
-        req.setAttribute("message", "process instance (id = "
-                + processInstanceId + ") has been started.");
+		if (cmd.equals("start")) {
 
-        ServletContext context = this.getServletContext();
-        RequestDispatcher dispatcher = context
-                .getRequestDispatcher("/index.jsp");
-        dispatcher.forward(req, res);
-    }
+			long processInstanceId = -1;
+			try {
+				String recipient = req.getParameter("recipient");
+				processInstanceId = jbpmService.startProcess(recipient);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+
+			req.setAttribute("message", "process instance (id = " + processInstanceId + ") has been started.");
+
+			ServletContext context = this.getServletContext();
+			RequestDispatcher dispatcher = context.getRequestDispatcher("/index.jsp");
+			dispatcher.forward(req, res);
+
+		} else if (cmd.equals("abort")) {
+
+			try {
+				List<Long> processInstanceIds = new ArrayList<Long>();
+				
+				long processInstanceId = Long.parseLong(req.getParameter("processInstanceId"));
+				System.out.println("### process instance id: " + processInstanceId);
+				
+//				AuditLogService auditLogService = new JPAAuditLogService(emf);
+//				List<ProcessInstanceLog> processInstances = auditLogService.findSubProcessInstances(processInstanceId);
+//
+//				for (ProcessInstanceLog processInstance : processInstances) {
+//					System.out.println("### sub process instance id: " + processInstance.getId());
+//					processInstanceIds.add(processInstance.getId());
+//				}
+				processInstanceIds.add(processInstanceId);
+
+				for (Long pid : processInstanceIds) {
+					System.out.println("<<< process instance id: " + pid);
+				}
+				
+				jbpmService.abortProcess(processInstanceIds);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+
+			ServletContext context = this.getServletContext();
+			RequestDispatcher dispatcher = context.getRequestDispatcher("/index.jsp");
+			dispatcher.forward(req, res);
+			
+		}	else if (cmd.equals("list")) {
+
+			AuditLogService auditLogService = new JPAAuditLogService(emf);
+			List<ProcessInstanceLog> processInstances = auditLogService.findProcessInstances();
+			
+			req.setAttribute("processInstances", processInstances);
+
+			ServletContext context = this.getServletContext();
+			RequestDispatcher dispatcher = context.getRequestDispatcher("/abortProcess.jsp");
+			dispatcher.forward(req, res);
+		}
+	}
 }
