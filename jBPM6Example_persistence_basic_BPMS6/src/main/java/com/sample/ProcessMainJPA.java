@@ -38,6 +38,8 @@ public class ProcessMainJPA {
 
     public static final void main(String[] args) throws Exception {
         
+        try {
+        
         setup();
 
         RuntimeManager manager = getRuntimeManager("sample.bpmn");
@@ -79,6 +81,10 @@ public class ProcessMainJPA {
 
         // -----------
         manager.disposeRuntimeEngine(runtime);
+        
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
 
         System.exit(0);
     }

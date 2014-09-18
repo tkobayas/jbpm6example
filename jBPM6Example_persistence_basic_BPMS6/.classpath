@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="var" path="BPMS6/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-engine/jboss-bpms-engine/lib/activation-1.1.1-redhat-2.jar"/>
 	<classpathentry kind="var" path="BPMS6/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-engine/jboss-bpms-engine/lib/aether-api-1.13.1.jar"/>
 	<classpathentry kind="var" path="BPMS6/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-engine/jboss-bpms-engine/lib/aether-connector-file-1.13.1.jar"/>
@@ -215,5 +214,6 @@
 	<classpathentry kind="var" path="BPMS6/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-engine/jboss-bpms-engine/kie-services-remote-6.0.3-redhat-4.jar"/>
 	<classpathentry kind="var" path="BPMS6/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-engine/jboss-bpms-engine/kie-spring-6.0.3-redhat-4.jar"/>
 	<classpathentry kind="var" path="BPMS6/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-6.0.2.GA-redhat-5-deployable-generic/jboss-bpms-engine/jboss-bpms-engine/knowledge-api-6.0.3-redhat-4.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.32.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
