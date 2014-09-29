@@ -8,10 +8,13 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import junit.framework.TestCase;
+
 import org.jbpm.process.audit.JPAAuditLogService;
 import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 import org.jbpm.test.JBPMHelper;
+import org.junit.Test;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
@@ -32,56 +35,59 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
 /**
  * This is a sample file to launch a process.
  */
-public class ProcessMainJPA {
+public class ProcessJPATest extends TestCase {
 
     private static EntityManagerFactory emf;
 
-    public static final void main(String[] args) throws Exception {
+    @Test
+    public void testProcess() throws Exception {
         
         try {
-        
-        setup();
 
-        RuntimeManager manager = getRuntimeManager("sample.bpmn");
-        RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
-        KieSession ksession = runtime.getKieSession();
-        
-//        JPAAuditLogService logService = new JPAAuditLogService(ksession.getEnvironment());
-//        logService.clear();
-        
-        BitronixTransactionManager transactionManager = TransactionManagerServices.getTransactionManager();
-        transactionManager.setTransactionTimeout(3600); // longer timeout for a debugger
+            setup();
 
-        // start a new process instance
-        Map<String, Object> params = new HashMap<String, Object>();
-        ProcessInstance pi = ksession.startProcess("com.sample.bpmn.hello", params);
-        System.out.println("A process instance started : pid = " + pi.getId());
+            RuntimeManager manager = getRuntimeManager("sample.bpmn");
+            RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
+            KieSession ksession = runtime.getKieSession();
 
-        TaskService taskService = runtime.getTaskService();
+            // JPAAuditLogService logService = new
+            // JPAAuditLogService(ksession.getEnvironment());
+            // logService.clear();
 
-        // ------------
-        {
-            List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("john", "en-UK");
-            for (TaskSummary taskSummary : list) {
-                System.out.println("john starts a task : taskId = " + taskSummary.getId());
-                taskService.start(taskSummary.getId(), "john");
-                taskService.complete(taskSummary.getId(), "john", null);
+            BitronixTransactionManager transactionManager = TransactionManagerServices.getTransactionManager();
+            transactionManager.setTransactionTimeout(3600); // longer timeout
+                                                            // for a debugger
+
+            // start a new process instance
+            Map<String, Object> params = new HashMap<String, Object>();
+            ProcessInstance pi = ksession.startProcess("com.sample.bpmn.hello", params);
+            System.out.println("A process instance started : pid = " + pi.getId());
+
+            TaskService taskService = runtime.getTaskService();
+
+            // ------------
+            {
+                List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("john", "en-UK");
+                for (TaskSummary taskSummary : list) {
+                    System.out.println("john starts a task : taskId = " + taskSummary.getId());
+                    taskService.start(taskSummary.getId(), "john");
+                    taskService.complete(taskSummary.getId(), "john", null);
+                }
             }
-        }
 
-        // -----------
-        {
-            List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("mary", "en-UK");
-            for (TaskSummary taskSummary : list) {
-                System.out.println("mary starts a task : taskId = " + taskSummary.getId());
-                taskService.start(taskSummary.getId(), "mary");
-                taskService.complete(taskSummary.getId(), "mary", null);
+            // -----------
+            {
+                List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("mary", "en-UK");
+                for (TaskSummary taskSummary : list) {
+                    System.out.println("mary starts a task : taskId = " + taskSummary.getId());
+                    taskService.start(taskSummary.getId(), "mary");
+                    taskService.complete(taskSummary.getId(), "mary", null);
+                }
             }
-        }
 
-        // -----------
-        manager.disposeRuntimeEngine(runtime);
-        
+            // -----------
+            manager.disposeRuntimeEngine(runtime);
+
         } catch (Throwable th) {
             th.printStackTrace();
         }
