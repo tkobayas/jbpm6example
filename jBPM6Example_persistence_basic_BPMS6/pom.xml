@@ -12,7 +12,7 @@
   <description>A sample jBPM Maven project</description>
 
   <properties>
-    <jbpm.version>6.0.3-redhat-4</jbpm.version>
+    <jbpm.version>6.0.3-redhat-6</jbpm.version>
   </properties>
 
   <dependencies>
