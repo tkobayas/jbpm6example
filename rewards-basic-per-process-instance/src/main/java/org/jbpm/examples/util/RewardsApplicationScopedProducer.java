@@ -18,12 +18,11 @@ package org.jbpm.examples.util;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 
-import org.jbpm.runtime.manager.impl.cdi.InjectableRegisterableItemsFactory;
+import org.jbpm.services.task.identity.DefaultUserInfo;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeEnvironmentBuilder;
@@ -32,27 +31,33 @@ import org.kie.internal.io.ResourceFactory;
 import org.kie.internal.runtime.manager.cdi.qualifier.PerProcessInstance;
 import org.kie.internal.runtime.manager.cdi.qualifier.PerRequest;
 import org.kie.internal.runtime.manager.cdi.qualifier.Singleton;
+import org.kie.internal.task.api.UserInfo;
 
 
 @ApplicationScoped
 public class RewardsApplicationScopedProducer {
 
-    @Inject
-    private InjectableRegisterableItemsFactory factory;
-
-    @Inject
-    private UserGroupCallback usergroupCallback;
-
-    @PersistenceUnit(unitName = "org.jbpm.examples.rewards-basic")
+    @PersistenceUnit(unitName = "org.jbpm.domain")
     private EntityManagerFactory emf;
 
     @Produces
     public EntityManagerFactory produceEntityManagerFactory() {
         if (this.emf == null) {
             this.emf = Persistence
-                    .createEntityManagerFactory("org.jbpm.examples.rewards-basic");
+                    .createEntityManagerFactory("org.jbpm.domain");
         }
         return this.emf;
+    }
+    
+    @Produces
+    public UserInfo produceUserInfo() {
+        // default implementation will load userinfo.properties file on the classpath
+        return new DefaultUserInfo(true);
+    }
+
+    @Produces
+    public UserGroupCallback produceUserGroupCallback() {
+        return new RewardsUserGroupCallback();
     }
 
     @Produces
@@ -63,14 +68,11 @@ public class RewardsApplicationScopedProducer {
         RuntimeEnvironment environment = RuntimeEnvironmentBuilder.Factory.get()
                 .newDefaultBuilder()
                 .entityManagerFactory(emf)
-                .userGroupCallback(usergroupCallback)
-                .registerableItemsFactory(factory)
                 .addAsset(
                         ResourceFactory
                                 .newClassPathResource("rewards-basic.bpmn"),
                         ResourceType.BPMN2).get();
         return environment;
     }
-
 
 }

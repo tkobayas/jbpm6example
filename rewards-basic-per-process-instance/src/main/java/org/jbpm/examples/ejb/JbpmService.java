@@ -24,6 +24,11 @@ import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class JbpmService {
 
+    // TaskService for operations which are not related to a specific process instance (= no need to use RuntimeEngine)
+    // Basically such operations are read only ones
+    @Inject
+    TaskService generalTaskService;
+
     @Inject
     @org.kie.internal.runtime.manager.cdi.qualifier.PerProcessInstance
     private RuntimeManager runtimeManager;
@@ -32,13 +37,6 @@ public class JbpmService {
 
         RuntimeEngine runtime = runtimeManager.getRuntimeEngine(EmptyContext.get());
         KieSession ksession = runtime.getKieSession();
-        TaskService taskService = runtime.getTaskService();
-
-        System.out.println(runtimeManager);
-        System.out.println(runtime);
-        System.out.println(ksession);
-        System.out.println(ksession.getId());
-        System.out.println(taskService);
 
         long processInstanceId = -1;
 
@@ -51,6 +49,7 @@ public class JbpmService {
 
         System.out.println("Process started ... : processInstanceId = " + processInstanceId);
 
+        // No need to dispose because runtime engine will be disposed on commit
         // runtimeManager.disposeRuntimeEngine(runtime);
 
         return processInstanceId;
@@ -58,25 +57,14 @@ public class JbpmService {
 
     public List<TaskSummary> retrieveTaskList(String actorId) {
 
-        RuntimeEngine runtime = runtimeManager.getRuntimeEngine(EmptyContext.get());
-        KieSession ksession = runtime.getKieSession();
-        TaskService taskService = runtime.getTaskService();
-
-        System.out.println(runtime);
-        System.out.println(ksession);
-        System.out.println(ksession.getId());
-        System.out.println(taskService);
-
         List<TaskSummary> list;
 
-        list = taskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
+        list = generalTaskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
 
         System.out.println("retrieveTaskList by " + actorId);
         for (TaskSummary task : list) {
             System.out.println(" task.getId() = " + task.getId());
         }
-
-        // runtimeManager.disposeRuntimeEngine(runtime);
 
         return list;
     }
@@ -84,13 +72,7 @@ public class JbpmService {
     public void approveTask(String actorId, long taskId, long processInstanceId) throws ProcessOperationException {
 
         RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
-        KieSession ksession = runtime.getKieSession();
         TaskService taskService = runtime.getTaskService();
-
-        System.out.println(runtime);
-        System.out.println(ksession);
-        System.out.println(ksession.getId());
-        System.out.println(taskService);
 
         try {
             System.out.println("approveTask (taskId = " + taskId + ") by " + actorId);
@@ -106,6 +88,7 @@ public class JbpmService {
                     + ") has likely been started by other users ", e);
         }
 
+        // No need to dispose because runtime engine will be disposed on commit
         // runtimeManager.disposeRuntimeEngine(runtime);
     }
 }
