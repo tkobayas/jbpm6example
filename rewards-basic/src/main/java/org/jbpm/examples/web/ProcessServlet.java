@@ -26,14 +26,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jbpm.examples.ejb.JbpmService;
+import org.jbpm.examples.ejb.ProcessLocal;
 
 public class ProcessServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private JbpmService jbpmService;
+    private ProcessLocal processService;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -43,7 +43,7 @@ public class ProcessServlet extends HttpServlet {
 
         long processInstanceId = -1;
         try {
-            processInstanceId = jbpmService.startProcess(recipient);
+            processInstanceId = processService.startProcess(recipient);
         } catch (Exception e) {
             throw new ServletException(e);
         }

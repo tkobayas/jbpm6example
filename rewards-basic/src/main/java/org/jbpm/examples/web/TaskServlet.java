@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jbpm.examples.ejb.JbpmService;
 import org.jbpm.examples.ejb.ProcessOperationException;
+import org.jbpm.examples.ejb.TaskLocal;
 import org.kie.api.task.model.TaskSummary;
 
 public class TaskServlet extends HttpServlet {
@@ -36,7 +36,7 @@ public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private JbpmService jbpmService;
+    private TaskLocal taskService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -48,7 +48,7 @@ public class TaskServlet extends HttpServlet {
 
             List<TaskSummary> taskList;
             try {
-                taskList = jbpmService.retrieveTaskList(user);
+                taskList = taskService.retrieveTaskList(user);
             } catch (Exception e) {
                 throw new ServletException(e);
             }
@@ -62,7 +62,7 @@ public class TaskServlet extends HttpServlet {
             String message = "";
             long taskId = Long.parseLong(req.getParameter("taskId"));
             try {
-                jbpmService.approveTask(user, taskId);
+                taskService.approveTask(user, taskId);
                 message = "Task (id = " + taskId + ") has been completed by " + user;
             } catch (ProcessOperationException e) {
                 // Recoverable exception
