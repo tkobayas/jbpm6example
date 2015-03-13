@@ -20,7 +20,7 @@ import org.kie.api.runtime.manager.RuntimeManagerFactory;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
 
-public class ProcessMain extends TestCase {
+public class ProcessTest extends TestCase {
 
     @Test
 	public void testProcess() {
