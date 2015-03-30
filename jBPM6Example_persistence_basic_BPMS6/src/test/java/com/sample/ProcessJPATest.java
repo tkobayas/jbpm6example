@@ -10,10 +10,13 @@ import javax.persistence.Persistence;
 
 import junit.framework.TestCase;
 
+import org.h2.tools.Server;
 import org.jbpm.process.audit.JPAAuditLogService;
 import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 import org.jbpm.test.JBPMHelper;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
@@ -35,16 +38,44 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
 /**
  * This is a sample file to launch a process.
  */
-public class ProcessJPATest extends TestCase {
+public class ProcessJPATest {
 
     private static EntityManagerFactory emf;
 
+    private static Server h2Server;
+    private static PoolingDataSource ds;
+
+    @Before
+    public void setup() {
+        // for H2 datasource
+        h2Server = JBPMHelper.startH2Server();
+        PoolingDataSource ds = JBPMHelper.setupDataSource();
+
+        // for external database datasource
+        // PoolingDataSource ds = setupDataSource();
+
+        Map configOverrides = new HashMap();
+        configOverrides.put("hibernate.hbm2ddl.auto", "create"); // Uncomment if you don't want to clean up tables
+        configOverrides.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); // Edit for other databases
+        // configOverrides.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
+
+        emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa", configOverrides);
+    }
+
+    @After
+    public void teardown() {
+        if (ds != null) {
+            ds.close();
+        }
+        if (h2Server != null) {
+            h2Server.shutdown();
+        }
+    }
+
     @Test
     public void testProcess() throws Exception {
-        
-        try {
 
-            setup();
+        try {
 
             RuntimeManager manager = getRuntimeManager("sample.bpmn");
             RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
@@ -91,44 +122,18 @@ public class ProcessJPATest extends TestCase {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-
-        System.exit(0);
-    }
-    
-    private static void setup() {
-        // for H2 datasource
-        JBPMHelper.startH2Server();
-        JBPMHelper.setupDataSource();
-
-        // for external database datasource
-//         setupDataSource();
-        
-        Map configOverrides = new HashMap();
-        configOverrides.put("hibernate.hbm2ddl.auto", "create"); // Uncomment if you don't want to clean up tables
-        configOverrides.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); // Edit for other databases
-//        configOverrides.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
-
-        emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa", configOverrides);
-
     }
 
     private static RuntimeManager getRuntimeManager(String process) {
-
-
         Properties properties = new Properties();
         properties.setProperty("krisv", "");
         properties.setProperty("mary", "");
         properties.setProperty("john", "");
         UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(properties);
 
-
-        RuntimeEnvironment environment =
-                RuntimeEnvironmentBuilder.getDefault()
-                .persistence(true)
-                .entityManagerFactory(emf)
-                .userGroupCallback(userGroupCallback)
-                .addAsset(ResourceFactory.newClassPathResource(process), ResourceType.BPMN2)
-                .get();
+        RuntimeEnvironment environment = RuntimeEnvironmentBuilder.getDefault().persistence(true)
+                .entityManagerFactory(emf).userGroupCallback(userGroupCallback)
+                .addAsset(ResourceFactory.newClassPathResource(process), ResourceType.BPMN2).get();
         return RuntimeManagerFactory.Factory.get().newPerProcessInstanceRuntimeManager(environment);
 
     }
