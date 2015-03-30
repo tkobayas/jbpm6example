@@ -8,8 +8,6 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import junit.framework.TestCase;
-
 import org.h2.tools.Server;
 import org.jbpm.process.audit.JPAAuditLogService;
 import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
@@ -40,6 +38,8 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
  */
 public class ProcessJPATest {
 
+    private static final boolean H2 = true;
+
     private static EntityManagerFactory emf;
 
     private static Server h2Server;
@@ -47,18 +47,23 @@ public class ProcessJPATest {
 
     @Before
     public void setup() {
-        // for H2 datasource
-        h2Server = JBPMHelper.startH2Server();
-        PoolingDataSource ds = JBPMHelper.setupDataSource();
 
-        // for external database datasource
-        // PoolingDataSource ds = setupDataSource();
+        if (H2) {
+            // for H2 datasource
+            h2Server = JBPMHelper.startH2Server();
+            ds = JBPMHelper.setupDataSource();
+        } else {
+            // for external database datasource
+            ds = setupDataSource();
+        }
 
         Map configOverrides = new HashMap();
         configOverrides.put("hibernate.hbm2ddl.auto", "create"); // Uncomment if you don't want to clean up tables
-        configOverrides.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); // Edit for other databases
-        // configOverrides.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
-
+        if (H2) {
+            configOverrides.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        } else {
+            configOverrides.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect"); // Change for other DB
+        }
         emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa", configOverrides);
     }
 
@@ -81,13 +86,11 @@ public class ProcessJPATest {
             RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
             KieSession ksession = runtime.getKieSession();
 
-            // JPAAuditLogService logService = new
-            // JPAAuditLogService(ksession.getEnvironment());
+            // JPAAuditLogService logService = new JPAAuditLogService(ksession.getEnvironment());
             // logService.clear();
 
             BitronixTransactionManager transactionManager = TransactionManagerServices.getTransactionManager();
-            transactionManager.setTransactionTimeout(3600); // longer timeout
-                                                            // for a debugger
+            transactionManager.setTransactionTimeout(3600); // longer timeout for a debugger
 
             // start a new process instance
             Map<String, Object> params = new HashMap<String, Object>();
