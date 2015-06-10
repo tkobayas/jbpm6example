@@ -150,7 +150,7 @@ public class ProcessJPATest {
         pds.setAllowLocalTransactions(true);
         pds.getDriverProperties().put("user", "mysql");
         pds.getDriverProperties().put("password", "mysql");
-        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbpms603");
+        pds.getDriverProperties().put("url", "jdbc:mysql://localhost:3306/testbpms610");
         pds.getDriverProperties().put("driverClassName", "com.mysql.jdbc.Driver");
         pds.init();
         return pds;
