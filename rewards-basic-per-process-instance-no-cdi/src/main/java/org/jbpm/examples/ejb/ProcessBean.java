@@ -19,6 +19,7 @@ package org.jbpm.examples.ejb;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -31,42 +32,46 @@ import javax.transaction.UserTransaction;
 import org.jbpm.examples.util.JbpmUtils;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessInstance;
-import org.kie.internal.runtime.manager.context.EmptyContext;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 public class ProcessBean implements ProcessLocal {
-    
+
     @PersistenceUnit(unitName = "org.jbpm.domain")
     private EntityManagerFactory emf;
 
     @Resource
     private UserTransaction ut;
 
-    public long startProcess(String recipient) throws Exception {
+    @PostConstruct
+    public void init() {
+        JbpmUtils.init(emf);
+    }
 
-        RuntimeEngine runtime = JbpmUtils.getRuntimeManager(emf).getRuntimeEngine(EmptyContext
-                .get());
-        KieSession ksession = runtime.getKieSession();
+    public long startProcess(String recipient) throws Exception {
 
         long processInstanceId = -1;
 
         ut.begin();
 
         try {
+            RuntimeManager manager = JbpmUtils.getRuntimeManager();
+            RuntimeEngine engine = manager.getRuntimeEngine(ProcessInstanceIdContext.get());
+            KieSession ksession = engine.getKieSession();
+
             // start a new process instance
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("recipient", recipient);
-            ProcessInstance processInstance = ksession.startProcess(
-                    "com.sample.rewards-basic", params);
+            ProcessInstance processInstance = ksession.startProcess("com.sample.rewards-basic", params);
 
             processInstanceId = processInstance.getId();
 
-            System.out.println("Process started ... : processInstanceId = "
-                    + processInstanceId);
+            System.out.println("Process started ... : processInstanceId = " + processInstanceId);
 
-            ut.commit();
+            ut.commit(); // engine is disposed on commit
         } catch (Exception e) {
             e.printStackTrace();
             if (ut.getStatus() == Status.STATUS_ACTIVE) {

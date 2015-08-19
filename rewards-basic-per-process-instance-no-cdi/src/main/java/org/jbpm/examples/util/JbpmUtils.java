@@ -4,7 +4,6 @@ import javax.persistence.EntityManagerFactory;
 
 import org.jbpm.services.task.HumanTaskConfigurator;
 import org.jbpm.services.task.HumanTaskServiceFactory;
-import org.jbpm.services.task.wih.ExternalTaskEventListener;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeEnvironmentBuilder;
@@ -16,9 +15,9 @@ import org.kie.internal.io.ResourceFactory;
 public class JbpmUtils {
 
     private static RuntimeManager runtimeManager;
-    private static TaskService taskService;
-
-    public synchronized static RuntimeManager getRuntimeManager(EntityManagerFactory emf) {
+    private static TaskService readOnlyTaskService;
+    
+    public synchronized static void init(EntityManagerFactory emf) {
         if (runtimeManager == null) {
             RuntimeEnvironment environment = RuntimeEnvironmentBuilder.Factory.get()
                     .newDefaultBuilder()
@@ -28,19 +27,20 @@ public class JbpmUtils {
                     .get();
             runtimeManager = RuntimeManagerFactory.Factory.get().newPerProcessInstanceRuntimeManager(environment);
         }
-        return runtimeManager;
-    }
-
-    public synchronized static TaskService getTaskService(EntityManagerFactory emf) {
-        if (taskService == null) {
-            // TODO: follow LocalTaskServiceFactory
+        
+        if (readOnlyTaskService == null) {
             HumanTaskConfigurator configurator = HumanTaskServiceFactory.newTaskServiceConfigurator()
                     .entityManagerFactory(emf)
                     .userGroupCallback(new RewardsUserGroupCallback());
-            configurator.listener(new ExternalTaskEventListener());
-            taskService = configurator.getTaskService();
+            readOnlyTaskService = configurator.getTaskService();
         }
-        return taskService;
     }
 
+    public static RuntimeManager getRuntimeManager() {
+        return runtimeManager;
+    }
+
+    public static TaskService getReadOnlyTaskService() {
+        return readOnlyTaskService;
+    }
 }

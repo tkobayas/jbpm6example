@@ -18,11 +18,11 @@ package org.jbpm.examples.ejb;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceUnit;
@@ -32,8 +32,12 @@ import javax.transaction.UserTransaction;
 
 import org.jbpm.examples.util.JbpmUtils;
 import org.jbpm.services.task.exception.PermissionDeniedException;
+import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.TaskService;
+import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -41,18 +45,23 @@ public class TaskBean implements TaskLocal {
 
     @PersistenceUnit(unitName = "org.jbpm.domain")
     private EntityManagerFactory emf;
-    
+
     @Resource
     private UserTransaction ut;
-    
+
+    @PostConstruct
+    public void init() {
+        JbpmUtils.init(emf);
+    }
+
     public List<TaskSummary> retrieveTaskList(String actorId) throws Exception {
 
         ut.begin();
-        
+
         List<TaskSummary> list;
-        
+
         try {
-            list = JbpmUtils.getTaskService(emf).getTasksAssignedAsPotentialOwner(actorId, "en-UK");
+            list = JbpmUtils.getReadOnlyTaskService().getTasksAssignedAsPotentialOwner(actorId, "en-UK");
             ut.commit();
         } catch (RollbackException e) {
             e.printStackTrace();
@@ -73,24 +82,20 @@ public class TaskBean implements TaskLocal {
 
         try {
             System.out.println("approveTask (taskId = " + taskId + ") by " + actorId);
-            JbpmUtils.getTaskService(emf).start(taskId, actorId);
-            JbpmUtils.getTaskService(emf).complete(taskId, actorId, null);
 
-            //Thread.sleep(10000); // To test OptimisticLockException
+            // Use taskService from RuntimeEngine
+            Task taskById = JbpmUtils.getReadOnlyTaskService().getTaskById(taskId);
+            RuntimeManager manager = JbpmUtils.getRuntimeManager();
+            RuntimeEngine engine = manager.getRuntimeEngine(ProcessInstanceIdContext.get(taskById.getTaskData()
+                    .getProcessInstanceId()));
+            TaskService taskService = engine.getTaskService();
 
-            ut.commit();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-            Throwable cause = e.getCause();
-            if (cause != null && cause instanceof OptimisticLockException) {
-                // Concurrent access to the same process instance
-                throw new ProcessOperationException("The same process instance has likely been accessed concurrently",
-                        e);
-            }
-            throw new RuntimeException(e);
+            taskService.start(taskId, actorId);
+            taskService.complete(taskId, actorId, null);
+
+            ut.commit(); // engine is disposed on commit
         } catch (PermissionDeniedException e) {
             e.printStackTrace();
-            // Transaction might be already rolled back by TaskServiceSession
             if (ut.getStatus() == Status.STATUS_ACTIVE) {
                 ut.rollback();
             }
@@ -99,12 +104,11 @@ public class TaskBean implements TaskLocal {
                     + ") has likely been started by other users ", e);
         } catch (Exception e) {
             e.printStackTrace();
-            // Transaction might be already rolled back by TaskServiceSession
             if (ut.getStatus() == Status.STATUS_ACTIVE) {
                 ut.rollback();
             }
             throw new RuntimeException(e);
-        } 
+        }
     }
 
 }
