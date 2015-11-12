@@ -28,6 +28,7 @@ import org.kie.api.task.UserGroupCallback;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.io.ResourceFactory;
 import org.kie.internal.runtime.manager.context.EmptyContext;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 
 import bitronix.tm.BitronixTransactionManager;
 import bitronix.tm.TransactionManagerServices;
@@ -83,7 +84,7 @@ public class ProcessJPATest {
         try {
 
             RuntimeManager manager = getRuntimeManager("sample.bpmn");
-            RuntimeEngine runtime = manager.getRuntimeEngine(EmptyContext.get());
+            RuntimeEngine runtime = manager.getRuntimeEngine(ProcessInstanceIdContext.get());
             KieSession ksession = runtime.getKieSession();
 
             // JPAAuditLogService logService = new JPAAuditLogService(ksession.getEnvironment());
