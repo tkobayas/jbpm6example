@@ -19,10 +19,10 @@
         <type>pom</type>
 
         <!-- BPMS 6.2.0 -->
-        <version>6.2.0.GA-redhat-1</version>
+<!--         <version>6.2.0.GA-redhat-1</version> -->
 
         <!-- BPMS 6.2.1 -->
-<!--         <version>6.2.1.GA-redhat-2</version> -->
+        <version>6.2.1.GA-redhat-2</version>
         
         <scope>import</scope>
       </dependency>
