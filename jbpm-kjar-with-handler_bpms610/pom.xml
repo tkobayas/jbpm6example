@@ -14,7 +14,7 @@
   </properties>
 
   <dependencies>
-      <dependency>
+    <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-workitems</artifactId>
       <version>${jbpm.version}</version>
@@ -30,6 +30,11 @@
         <version>${jbpm.version}</version>
         <extensions>true</extensions>
         <dependencies>
+          <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-persistence-jpa</artifactId>
+            <version>${jbpm.version}</version>
+          </dependency>
           <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-bpmn2</artifactId>

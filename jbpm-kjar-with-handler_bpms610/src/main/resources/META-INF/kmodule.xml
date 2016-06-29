@@ -1,12 +1,12 @@
 <kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
-<!--   <kbase default="true" name="kbase"> -->
-<!--     <ksession default="true" name="ksession" type="stateful"> -->
-<!--       <workItemHandlers> -->
-<!--         <workItemHandler name="Send Task" -->
-<!--           type="new com.sample.MyWorkItemHandler()" /> -->
-<!--         <workItemHandler name="Human Task" -->
-<!--           type="new com.sample.MyWorkItemHandler()" /> -->
-<!--       </workItemHandlers> -->
-<!--     </ksession> -->
-<!--   </kbase> -->
+  <kbase default="true" name="kbase">
+    <ksession default="true" name="ksession" type="stateful">
+      <workItemHandlers>
+        <workItemHandler name="Send Task"
+          type="new com.sample.MyWorkItemHandler()" />
+        <workItemHandler name="Human Task"
+          type="new com.sample.MyWorkItemHandler()" />
+      </workItemHandlers>
+    </ksession>
+  </kbase>
 </kmodule>
