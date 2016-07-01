@@ -12,6 +12,15 @@ This simple example aims to provide an example usage of:
 - PerProcessInstance RuntimeManager
 - Maven build
 
+### NOTE
+There are 3 styles regarding transaction usage:
+
+1. No outer transaction so jBPM engine (ksession/taskService) starts its own transaction
+2. Span an outer transaction with UserTransaction
+3. Span an outer transaction with Container Managed Transaction
+
+This example has EJB with TransactionManagementType.BEAN but doesn't use UserTransaction. It means the option 1 is chosen. You can add UserTransaction (option 2) or change to TransactionManagementType.CONTAINER (option 3).
+
 ### Steps to run
 - Make sure you have at least Java 7 and Maven 3 installed
 - Download somewhere JBoss EAP 6.4
