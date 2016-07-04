@@ -4,8 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.example</groupId>
-  <artifactId>simple-jbpm-app</artifactId>
+  <artifactId>simple-jbpm-app-parent</artifactId>
   <version>6.3.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

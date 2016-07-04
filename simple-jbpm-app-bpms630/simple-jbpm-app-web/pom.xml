@@ -10,17 +10,41 @@
 
  <properties>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <version.org.jboss.bom.brms>6.3.0.GA-redhat-3</version.org.jboss.bom.brms>
+  <version.org.jboss.integration-platform>6.0.6.Final-redhat-1</version.org.jboss.integration-platform>
  </properties>
 
  <dependencyManagement>
   <dependencies>
+
    <dependency>
     <groupId>org.jboss.bom.brms</groupId>
     <artifactId>jboss-javaee-6.0-with-brms-bpmsuite</artifactId>
     <type>pom</type>
-    <version>6.3.0.GA-redhat-3</version>
+    <version>${version.org.jboss.bom.brms}</version>
     <scope>import</scope>
    </dependency>
+
+   <!-- Need this to have correct guava version -->
+   <dependency>
+    <groupId>org.jboss.integration-platform</groupId>
+    <artifactId>jboss-integration-platform-bom</artifactId>
+    <type>pom</type>
+    <version>${version.org.jboss.integration-platform}</version>
+    <scope>import</scope>
+   </dependency>
+
+   <!-- You may use this bom instead of above 2 boms if you want 3rd version 
+    libraries to fully align to business-central/kie-server versions. See discussion 
+    in https://issues.jboss.org/browse/RHBRMS-2094 -->
+   <!-- <dependency> -->
+   <!-- <groupId>org.jboss.bom.brms</groupId> -->
+   <!-- <artifactId>jboss-brms-bpmsuite-platform-bom</artifactId> -->
+   <!-- <type>pom</type> -->
+   <!-- <version>${version.org.jboss.bom.brms}</version> -->
+   <!-- <scope>import</scope> -->
+   <!-- </dependency> -->
+
   </dependencies>
  </dependencyManagement>
 
@@ -29,7 +53,6 @@
   <dependency>
    <groupId>org.jboss.spec.javax.ejb</groupId>
    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-   <version>1.0.2.Final</version>
   </dependency>
   <dependency>
    <groupId>javax.servlet</groupId>
@@ -47,11 +70,7 @@
    <artifactId>jbpm-executor</artifactId>
   </dependency>
 
-  <dependency>
-   <groupId>com.google.guava</groupId>
-   <artifactId>guava</artifactId>
-   <version>13.0.1.redhat-2</version>
-  </dependency>
+  <!-- kie ci dependency to avoid linkage errors on EAP/Wildfly -->
   <dependency>
    <groupId>org.sonatype.sisu.inject</groupId>
    <artifactId>guice-servlet</artifactId>
