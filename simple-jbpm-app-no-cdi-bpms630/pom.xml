@@ -15,33 +15,37 @@
  </properties>
 
  <dependencyManagement>
-  <!-- You may use this bom instead of below 2 boms if you want 3rd version 
-   libraries to fully align to business-central/kie-server versions. See discussion 
-   in https://issues.jboss.org/browse/RHBRMS-2094 -->
-  <dependency>
-   <groupId>org.jboss.bom.brms</groupId>
-   <artifactId>jboss-brms-bpmsuite-platform-bom</artifactId>
-   <type>pom</type>
-   <version>${version.org.jboss.bom.brms}</version>
-   <scope>import</scope>
-  </dependency>
+  <dependencies>
 
-  <!-- <dependency> -->
-  <!-- <groupId>org.jboss.bom.brms</groupId> -->
-  <!-- <artifactId>jboss-javaee-6.0-with-brms-bpmsuite</artifactId> -->
-  <!-- <type>pom</type> -->
-  <!-- <version>${version.org.jboss.bom.brms}</version> -->
-  <!-- <scope>import</scope> -->
-  <!-- </dependency> -->
+   <!-- You may use this bom instead of below 2 boms if you want 3rd version 
+    libraries to fully align to business-central/kie-server versions. See discussion 
+    in https://issues.jboss.org/browse/RHBRMS-2094 -->
+   <dependency>
+    <groupId>org.jboss.bom.brms</groupId>
+    <artifactId>jboss-brms-bpmsuite-platform-bom</artifactId>
+    <type>pom</type>
+    <version>${version.org.jboss.bom.brms}</version>
+    <scope>import</scope>
+   </dependency>
 
-  <!-- Need this to have correct guava version -->
-  <!-- <dependency> -->
-  <!-- <groupId>org.jboss.integration-platform</groupId> -->
-  <!-- <artifactId>jboss-integration-platform-bom</artifactId> -->
-  <!-- <type>pom</type> -->
-  <!-- <version>${version.org.jboss.integration-platform}</version> -->
-  <!-- <scope>import</scope> -->
-  <!-- </dependency> -->
+   <!-- <dependency> -->
+   <!-- <groupId>org.jboss.bom.brms</groupId> -->
+   <!-- <artifactId>jboss-javaee-6.0-with-brms-bpmsuite</artifactId> -->
+   <!-- <type>pom</type> -->
+   <!-- <version>${version.org.jboss.bom.brms}</version> -->
+   <!-- <scope>import</scope> -->
+   <!-- </dependency> -->
+
+   <!-- Need this to have correct guava version -->
+   <!-- <dependency> -->
+   <!-- <groupId>org.jboss.integration-platform</groupId> -->
+   <!-- <artifactId>jboss-integration-platform-bom</artifactId> -->
+   <!-- <type>pom</type> -->
+   <!-- <version>${version.org.jboss.integration-platform}</version> -->
+   <!-- <scope>import</scope> -->
+   <!-- </dependency> -->
+
+  </dependencies>
  </dependencyManagement>
 
  <dependencies>
