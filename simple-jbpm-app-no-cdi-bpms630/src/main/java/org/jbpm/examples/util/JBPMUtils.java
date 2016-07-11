@@ -29,7 +29,7 @@ public class JBPMUtils {
 			RuntimeEnvironment environment = RuntimeEnvironmentBuilder.getDefault()
 				.entityManagerFactory( getEntityManagerFactory())
 				.userGroupCallback(getUserGroupCalback())
-				.addAsset(ResourceFactory.newClassPathResource("rewards-basic.bpmn"), ResourceType.BPMN2)
+				.addAsset(ResourceFactory.newClassPathResource("rewards-basic.bpmn2"), ResourceType.BPMN2)
 				.get();
 		
 			runtimeManager = RuntimeManagerFactory.Factory.get().newPerProcessInstanceRuntimeManager(environment);
