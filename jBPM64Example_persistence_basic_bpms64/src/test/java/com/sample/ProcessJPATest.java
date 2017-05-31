@@ -88,7 +88,6 @@ public class ProcessJPATest {
             KieSession ksession = runtime.getKieSession();
 
             // JPAAuditLogService logService = new JPAAuditLogService(ksession.getEnvironment());
-            // logService.clear();
 
             BitronixTransactionManager transactionManager = TransactionManagerServices.getTransactionManager();
             transactionManager.setTransactionTimeout(3600); // longer timeout for a debugger
