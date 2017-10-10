@@ -1,0 +1,3 @@
+<jboss-web>
+    <context-root>simple-jbpm-app</context-root>
+</jboss-web>

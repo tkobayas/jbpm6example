@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+
+ <groupId>com.example</groupId>
+ <artifactId>simple-jbpm-app-no-cdi</artifactId>
+ <version>6.4.0-SNAPSHOT</version>
+ <packaging>war</packaging>
+
+ <properties>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <version.org.jboss.bom.brms>6.4.0.GA-redhat-2</version.org.jboss.bom.brms>
+  <version.org.jboss.integration-platform>6.0.6.Final-redhat-1</version.org.jboss.integration-platform>
+ </properties>
+
+ <dependencyManagement>
+  <dependencies>
+
+   <!-- You may use this bom instead of below 2 boms if you want 3rd version 
+    libraries to fully align to business-central/kie-server versions. See discussion 
+    in https://issues.jboss.org/browse/RHBRMS-2094 -->
+   <dependency>
+    <groupId>org.jboss.bom.brms</groupId>
+    <artifactId>jboss-brms-bpmsuite-platform-bom</artifactId>
+    <type>pom</type>
+    <version>${version.org.jboss.bom.brms}</version>
+    <scope>import</scope>
+   </dependency>
+
+   <!-- <dependency> -->
+   <!-- <groupId>org.jboss.bom.brms</groupId> -->
+   <!-- <artifactId>jboss-javaee-6.0-with-brms-bpmsuite</artifactId> -->
+   <!-- <type>pom</type> -->
+   <!-- <version>${version.org.jboss.bom.brms}</version> -->
+   <!-- <scope>import</scope> -->
+   <!-- </dependency> -->
+
+   <!-- Need this to have correct guava version -->
+   <!-- <dependency> -->
+   <!-- <groupId>org.jboss.integration-platform</groupId> -->
+   <!-- <artifactId>jboss-integration-platform-bom</artifactId> -->
+   <!-- <type>pom</type> -->
+   <!-- <version>${version.org.jboss.integration-platform}</version> -->
+   <!-- <scope>import</scope> -->
+   <!-- </dependency> -->
+
+  </dependencies>
+ </dependencyManagement>
+
+ <dependencies>
+  <!-- Java EE dependencies -->
+  <dependency>
+   <groupId>org.jboss.spec.javax.ejb</groupId>
+   <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+   <scope>provided</scope>
+  </dependency>
+  <dependency>
+   <groupId>javax.servlet</groupId>
+   <artifactId>servlet-api</artifactId>
+   <version>2.5</version>
+   <scope>provided</scope>
+  </dependency>
+
+  <dependency>
+   <groupId>org.jbpm</groupId>
+   <artifactId>jbpm-runtime-manager</artifactId>
+  </dependency>
+ </dependencies>
+
+ <repositories>
+  <repository>
+   <id>jboss-public-repository-group</id>
+   <name>JBoss Public Repository Group</name>
+   <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+   <layout>default</layout>
+   <releases>
+    <enabled>true</enabled>
+    <updatePolicy>never</updatePolicy>
+   </releases>
+   <snapshots>
+    <enabled>true</enabled>
+    <updatePolicy>daily</updatePolicy>
+   </snapshots>
+  </repository>
+
+  <repository>
+   <id>rh-all</id>
+   <url>http://maven.repository.redhat.com/ga</url>
+   <layout>default</layout>
+   <releases>
+    <enabled>true</enabled>
+    <updatePolicy>never</updatePolicy>
+   </releases>
+   <snapshots>
+    <enabled>false</enabled>
+   </snapshots>
+  </repository>
+ </repositories>
+</project>
